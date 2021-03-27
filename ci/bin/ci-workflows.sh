@@ -17,15 +17,7 @@ set -o pipefail # Fail pipelines if any command errors, not just the last one.
 # Infer this script has been sourced based upon WORKFLOWS_SCRIPT_LOCATION being non-empty.
 if [[ -n "${WORKFLOWS_SCRIPT_LOCATION:-}" ]]; then
   # Workflows are already sourced. Exit.
-  # Check to see if this script was sourced.
-  #   See: https://stackoverflow.com/a/28776166/402726
-  (return 0 2>/dev/null) && sourced=1 || sourced=0
-  if [[ $sourced -eq 1 ]]; then
-    # NOTE: return is used, rather than exit, to prevent shell exit when sourcing from an interactive shell.
-    return 0
-  else
-    exit 0
-  fi
+  (return 0 2>/dev/null) || exit 0
 fi
 
 # Context
@@ -58,15 +50,29 @@ ci-validate() {
 # Compose the project's artifacts, e.g., compiled binaries, Docker images.
 #--
 ci-compose() {
-  ci-docker-build
+  __conditionallyTagLatest() {
+    if [[ "${RELEASE_ENVIRONMENT:-false}" = true ]]; then
+      docker tag "${DOCKER_IMAGE}" "${DOCKER_IMAGE_REPOSITORY}:latest"
+    fi
+  }
+
+  ci-docker-build &&
+    __conditionallyTagLatest
 }
 
 #--
 # Publish the project's artifact composition.
 #--
 ci-publish() {
+  __conditionallyPushLatest() {
+    if [[ "${RELEASE_ENVIRONMENT:-false}" = true ]]; then
+      docker push "${DOCKER_IMAGE_REPOSITORY}:latest"
+    fi
+  }
+
   docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
-    ci-docker-push
+    ci-docker-push &&
+    __conditionallyPushLatest
 }
 
 export -f ci-compose
