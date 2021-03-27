@@ -1,0 +1,24 @@
+name: Publish Prerelease
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  publish-prerelease:
+    # ubuntu-latest provides many dependencies.
+    # See: https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout latest commit
+        uses: actions/checkout@v2
+      - name: Install CICEE
+        run: dotnet tool install -g cicee || dotnet tool update -g cicee
+      - name: Execute compose script - Create a dry run composition to validate without publishing
+        run: cicee exec -c ci/bin/compose.sh
+        env:
+          DOCKER_IMAGE_REPOSITORY: ${{secrets.DOCKER_IMAGE_REPOSITORY}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}

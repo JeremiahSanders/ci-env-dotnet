@@ -7,7 +7,24 @@
     "variables": [
       {
         "name": "DOCKER_IMAGE_REPOSITORY",
-        "required": true
+        "description": "Docker image repository",
+        "required": true,
+        "secret": false,
+        "defaultValue": null
+      },
+      {
+        "name": "DOCKER_USERNAME",
+        "description": "Docker username",
+        "required": true,
+        "secret": false,
+        "defaultValue": null
+      },
+      {
+        "name": "DOCKER_PASSWORD",
+        "description": "Docker password or API token",
+        "required": true,
+        "secret": true,
+        "defaultValue": null
       }
     ]
   }
