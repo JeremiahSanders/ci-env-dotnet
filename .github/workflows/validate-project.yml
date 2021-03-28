@@ -1,0 +1,21 @@
+name: Validate Project
+
+on: [pull_request]
+
+jobs:
+  validate-project:
+    # ubuntu-latest provides many dependencies.
+    # See: https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout latest commit
+        uses: actions/checkout@v2
+      - name: Install CICEE
+        run: dotnet tool install -g cicee || dotnet tool update -g cicee
+      - name: Execute verification script - Validate source
+        run: cicee exec -c ci/bin/validate.sh
+        env:
+          DOCKER_IMAGE_REPOSITORY: ${{secrets.DOCKER_IMAGE_REPOSITORY}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+          DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
