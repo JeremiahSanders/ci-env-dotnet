@@ -5,7 +5,7 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.202
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.301
 
 # https://hub.docker.com/_/microsoft-dotnet
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
