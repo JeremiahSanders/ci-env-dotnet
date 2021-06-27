@@ -14,6 +14,14 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
   * Current `LTS` version.
   * Currently: `14.17.1`
 
+## Included Shells
+
+* `bash` (Provided by base .NET image)
+  * GNU bash, version `5.0.3(1)-release` (as of 2021/06/27)
+* `pwsh` (Provided by base .NET image)
+  * PowerShell `7.1.3` (as of 2021/06/27)
+* `sh` (Provided by base .NET image)
+
 ## Included Tools
 
 > The following tools are installed with no explicit version requirement.
