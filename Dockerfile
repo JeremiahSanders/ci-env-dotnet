@@ -10,7 +10,7 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.202
 # https://hub.docker.com/_/microsoft-dotnet
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=14.16.1
+ARG NODE_VERSION=14.17.1
 ARG DOTNETCORE_31_VERSION=3.1.407
 ARG DOTNETCORE_31_SHA=b9c61061464a38df0a3eb5894a4a1229cd27d2ccba4168e434f4609b763630c01fbe1b2564826194d6d9b5ad86047e586312c0f35eafc3755dfe0ff9ba075c0c
 ARG DOTNETCORE_21_VERSION=2.1.814
@@ -59,8 +59,11 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   108F52B48DB57BB0CC439B2997B01419BD92F80A \
   B9E2F5981AA6E0CD28160D9FF13993A75599653C \
   ; do \
+  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+  gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
   gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
   gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+  gpg --batch --keyserver hkp://keyserver.pgp.com --recv-keys "$key" || \
   gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
   done \
   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
