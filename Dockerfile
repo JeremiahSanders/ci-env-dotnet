@@ -5,16 +5,16 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.202
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.301
 
 # https://hub.docker.com/_/microsoft-dotnet
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=14.16.1
-ARG DOTNETCORE_31_VERSION=3.1.407
-ARG DOTNETCORE_31_SHA=b9c61061464a38df0a3eb5894a4a1229cd27d2ccba4168e434f4609b763630c01fbe1b2564826194d6d9b5ad86047e586312c0f35eafc3755dfe0ff9ba075c0c
-ARG DOTNETCORE_21_VERSION=2.1.814
-ARG DOTNETCORE_21_SHA=79408996f53650d0c3ac39348fa102537d14190ba5dcc4b9152cdb8fc72566608ad7430f196731eeb62dcfacdb0f2fa37577b5d51e165afd9dd9ae15f9d2aabc
+ARG NODE_VERSION=14.17.1
+ARG DOTNETCORE_31_VERSION=3.1.410
+ARG DOTNETCORE_31_SHA=aef9340008c2002b73171f186a6a167edf3494b740286927fc86f908eca20f5df13289f88ba2a1ef2011c93542d8aefec11d919ed191fb449dcf1b22e0cd74bc
+ARG DOTNETCORE_21_VERSION=2.1.816
+ARG DOTNETCORE_21_SHA=58f0bc1f67de034ffd0dafb9c0fdb082786fc5057e89396ff574428d57331cd8d5b3e944e103918e05f7b66e354d56cdb242350a6ef932906c9c3d4b08d177e9
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -59,8 +59,11 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   108F52B48DB57BB0CC439B2997B01419BD92F80A \
   B9E2F5981AA6E0CD28160D9FF13993A75599653C \
   ; do \
+  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
+  gpg --batch --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys "$key" || \
   gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
   gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+  gpg --batch --keyserver hkp://keyserver.pgp.com --recv-keys "$key" || \
   gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
   done \
   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
