@@ -13,8 +13,6 @@ FROM ${DOTNET_SDK_IMAGE} AS build-environment
 ARG NODE_VERSION=14.17.6
 ARG DOTNETCORE_31_VERSION=3.1.413
 ARG DOTNETCORE_31_SHA=2a0824f11aba0b79d3f9a36af0395649bc9b4137e61b240a48dccb671df0a5b8c2086054f8e495430b7ed6c344bb3f27ac3dfda5967d863718a6dadeca951a83
-ARG DOTNETCORE_21_VERSION=2.1.816
-ARG DOTNETCORE_21_SHA=58f0bc1f67de034ffd0dafb9c0fdb082786fc5057e89396ff574428d57331cd8d5b3e944e103918e05f7b66e354d56cdb242350a6ef932906c9c3d4b08d177e9
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -114,14 +112,6 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
   && echo "${DOTNETCORE_31_SHA} dotnet.tar.gz" | sha512sum -c - \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
-  && rm dotnet.tar.gz
-
-# Install .NET Core 2.1 SDK - To support 2.1 LTS projects and 2.1 tools, e.g., fantomas.
-#   See: https://github.com/dotnet/dotnet-docker/blob/c0d0ee41932ff30f1eb2e9a1dd0faf92b3dceb9c/src/sdk/2.1/stretch/amd64/Dockerfile
-RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCORE_21_VERSION}/dotnet-sdk-${DOTNETCORE_21_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNETCORE_21_SHA} dotnet.tar.gz" | sha512sum -c - \
-  && mkdir -p /usr/share/dotnet \
-  && tar -zxf dotnet.tar.gz -C /usr/share/dotnet \
   && rm dotnet.tar.gz
 
 # Add global NPM packages
