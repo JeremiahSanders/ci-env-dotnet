@@ -5,14 +5,16 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:5.0.401
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.100
 
 # https://hub.docker.com/_/microsoft-dotnet
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=14.17.6
-ARG DOTNETCORE_31_VERSION=3.1.413
-ARG DOTNETCORE_31_SHA=2a0824f11aba0b79d3f9a36af0395649bc9b4137e61b240a48dccb671df0a5b8c2086054f8e495430b7ed6c344bb3f27ac3dfda5967d863718a6dadeca951a83
+ARG NODE_VERSION=16.13.0
+ARG DOTNET_5_VERSION=5.0.403
+ARG DOTNET_5_SHA=7ba5f7f898dba64ea7027dc66184d60ac5ac35fabe750bd509711628442e098413878789fad5766be163fd2867cf22ef482a951e187cf629bbc6f54dd9293a4a
+ARG DOTNETCORE_31_VERSION=3.1.414
+ARG DOTNETCORE_31_SHA=f0a133a2bfbbdb6e3f35ad543bfd8e48f35e2a0e0bd719f712853d686e5f453b89569504813fde33baf8788dfe509bb3bc7ad69026588761f0a07362eac76104
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -31,7 +33,8 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/6e7d6511aba22da645ec21bd157a369a78794e6c/14/stretch/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/cbbf60da587a7ca135b573f4c05810d88f04ace7/16/buster/Dockerfile
+#    NOTE: Reference above is for 16.12.0; the 16.13.0 image is not released to Docker Hub at time of writing.
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
@@ -105,6 +108,14 @@ RUN apt-get update \
   docker-ce-cli \
   -y \
   && rm -rf /var/lib/apt/lists/*
+
+# Install .NET Core 5 SDK - To support .NET 5 projects and tools.
+#   See: https://github.com/dotnet/dotnet-docker/blob/1eab4cad6e2d42308bd93d3f0cc1f7511ac75882/src/sdk/5.0/bullseye-slim/amd64/Dockerfile
+RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_5_VERSION}/dotnet-sdk-${DOTNET_5_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_5_SHA} dotnet.tar.gz" | sha512sum -c - \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
+  && rm dotnet.tar.gz
 
 # Install .NET Core 3.1 SDK - To support 3.1 LTS projects and 3.1 tools, e.g., JetBrains 'jb'.
 #   See: https://github.com/dotnet/dotnet-docker/blob/c0d0ee41932ff30f1eb2e9a1dd0faf92b3dceb9c/src/sdk/3.1/buster/amd64/Dockerfile

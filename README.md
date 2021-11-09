@@ -6,20 +6,20 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` version and all currently-supported `LTS` versions.
-  * Currently: `5.0.401`
+  * Currently: `6.0.100` (`LTS`) and `5.0.403` (`Current`; [supported until 2022/05/08][dotnet-support-policy])
 * .NET Core SDK
   * All currently-supported `LTS` versions.
-  * Currently: `3.1.413`
+  * Currently: `3.1.414`
 * node.js
   * Current `LTS` version.
-  * Currently: `14.17.6`
+  * Currently: `16.13.0` (includes `npm` `8.1.0`)
 
 ## Included Shells
 
 * `bash` (Provided by base .NET image)
-  * GNU bash, version `5.0.3(1)-release` (as of 2021/06/27)
+  * GNU bash, version `5.1.4(1)-release` (as of 2021/11/08)
 * `pwsh` (Provided by base .NET image)
-  * PowerShell `7.1.4` (as of 2021/09/18)
+  * PowerShell `7.2.0` (as of 2021/11/08)
 * `sh` (Provided by base .NET image)
 
 ## Included Tools
@@ -45,6 +45,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 [cicee-lib]: https://github.com/JeremiahSanders/cicee/blob/dev/docs/use/ci-library.md
 [coverlet]: https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/GlobalTool.md
 [docker]: https://docs.docker.com/engine/reference/commandline/cli/
+[dotnet-support-policy]: https://dotnet.microsoft.com/platform/support/policy/dotnet-core
 [fantomas]: https://github.com/fsprojects/fantomas/blob/master/docs/Documentation.md#using-the-command-line-tool
 [jq]: https://stedolan.github.io/jq/
 [repository]: https://hub.docker.com/r/gnosian/ci-env-dotnet
