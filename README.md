@@ -6,7 +6,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` version and all currently-supported `LTS` versions.
-  * Currently: `6.0.100`
+  * Currently: `6.0.100` (`LTS`) and `5.0.403` (`Current`; [supported until 2022/05/08][dotnet-support-policy])
 * .NET Core SDK
   * All currently-supported `LTS` versions.
   * Currently: `3.1.414`
@@ -45,6 +45,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 [cicee-lib]: https://github.com/JeremiahSanders/cicee/blob/dev/docs/use/ci-library.md
 [coverlet]: https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/GlobalTool.md
 [docker]: https://docs.docker.com/engine/reference/commandline/cli/
+[dotnet-support-policy]: https://dotnet.microsoft.com/platform/support/policy/dotnet-core
 [fantomas]: https://github.com/fsprojects/fantomas/blob/master/docs/Documentation.md#using-the-command-line-tool
 [jq]: https://stedolan.github.io/jq/
 [repository]: https://hub.docker.com/r/gnosian/ci-env-dotnet
