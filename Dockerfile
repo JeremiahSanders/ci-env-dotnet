@@ -5,16 +5,16 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.100
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.101
 
 # https://hub.docker.com/_/microsoft-dotnet
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=16.13.0
-ARG DOTNET_5_VERSION=5.0.403
-ARG DOTNET_5_SHA=7ba5f7f898dba64ea7027dc66184d60ac5ac35fabe750bd509711628442e098413878789fad5766be163fd2867cf22ef482a951e187cf629bbc6f54dd9293a4a
-ARG DOTNETCORE_31_VERSION=3.1.414
-ARG DOTNETCORE_31_SHA=f0a133a2bfbbdb6e3f35ad543bfd8e48f35e2a0e0bd719f712853d686e5f453b89569504813fde33baf8788dfe509bb3bc7ad69026588761f0a07362eac76104
+ARG NODE_VERSION=16.13.2
+ARG DOTNET_5_VERSION=5.0.404
+ARG DOTNET_5_SHA=6f9b83b2b661ce3b033a04d4c50ff3a435efa288de1a48f58be1150e64c5dd9d6bd2a4bf40f697dcd7d64ffaac24f14cc4a874e738544c5d0e8113c474fd2ee0
+ARG DOTNETCORE_31_VERSION=3.1.416
+ARG DOTNETCORE_31_SHA=dec1dcf326487031c45dec0849a046a0d034d6cbb43ab591da6d94c2faf72da8e31deeaf4d2165049181546d5296bb874a039ccc2f618cf95e68a26399da5e7f
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -33,8 +33,7 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/cbbf60da587a7ca135b573f4c05810d88f04ace7/16/buster/Dockerfile
-#    NOTE: Reference above is for 16.12.0; the 16.13.0 image is not released to Docker Hub at time of writing.
+#     See: https://github.com/nodejs/docker-node/blob/85ca3893867505ffbffbdf476722d3897fb3da98/16/buster/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
