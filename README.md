@@ -17,9 +17,9 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 ## Included Shells
 
 * `bash` (Provided by base .NET image)
-  * GNU bash, version `5.1.4(1)-release` (as of 2021/11/08)
+  * GNU bash, version `5.1.4(1)-release` (as of 2022/03/23)
 * `pwsh` (Provided by base .NET image)
-  * PowerShell `7.2.0` (as of 2021/11/08)
+  * PowerShell `7.2.1` (as of 2022/03/23)
 * `sh` (Provided by base .NET image)
 
 ## Included Tools
