@@ -5,17 +5,17 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.202
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.300
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=16.14.2
-ARG DOTNET_5_VERSION=5.0.407
-ARG DOTNET_5_SHA=b45f1bf086bfb5e0701c5e14534524ffc87d0195358ac4fa2cf36dac74537ca4c21c7177cfbfa7e121e77aa4106bb1e7039c9739ad73b942e2437bc5e39e6dce
-ARG DOTNETCORE_31_VERSION=3.1.418
-ARG DOTNETCORE_31_SHA=e60f14841f1d0156de163f6f1e4c6358f14bd57e81beed13d294022da8a5182e41b8333591f92c4cac8eec138b7bc85725c19ae10e4e73a139a5231bb12b557f
+ARG NODE_VERSION=16.15.0
+ARG DOTNET_5_VERSION=5.0.408
+ARG DOTNET_5_SHA=abbf22c420df2d8398d1616efa3d31e1b8f96130697746c45ad68668676d12e65ec3b4dd75f28a5dc7607da58b6e369693c0e658def15ce2431303c28e99db55
+ARG DOTNETCORE_31_VERSION=3.1.419
+ARG DOTNETCORE_31_SHA=957d9561b346226806270a969a302217dec2a5e4853225d73fbf85f20f6107137ac5678a6ffdf5c170a72f5ef93e3defe3218970bc20d97a4f880d5c7577376f
 
 # Install:
 #   gnupg      - node.js installation dependency
