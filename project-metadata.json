@@ -2,7 +2,7 @@
   "name": "ci-env-dotnet",
   "description": "Repository supporting gnosian/ci-env-dotnet Docker image.",
   "title": "ci-env-dotnet",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "ciEnvironment": {
     "variables": [
       {
