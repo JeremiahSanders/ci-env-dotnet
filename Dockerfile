@@ -12,8 +12,6 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.300
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=16.15.1
-ARG DOTNET_5_VERSION=5.0.408
-ARG DOTNET_5_SHA=abbf22c420df2d8398d1616efa3d31e1b8f96130697746c45ad68668676d12e65ec3b4dd75f28a5dc7607da58b6e369693c0e658def15ce2431303c28e99db55
 ARG DOTNETCORE_31_VERSION=3.1.419
 ARG DOTNETCORE_31_SHA=957d9561b346226806270a969a302217dec2a5e4853225d73fbf85f20f6107137ac5678a6ffdf5c170a72f5ef93e3defe3218970bc20d97a4f880d5c7577376f
 
@@ -108,14 +106,6 @@ RUN apt-get update \
   docker-ce-cli \
   -y \
   && rm -rf /var/lib/apt/lists/*
-
-# Install .NET Core 5 SDK - To support .NET 5 projects and tools.
-#   See: https://github.com/dotnet/dotnet-docker/blob/1eab4cad6e2d42308bd93d3f0cc1f7511ac75882/src/sdk/5.0/bullseye-slim/amd64/Dockerfile
-RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_5_VERSION}/dotnet-sdk-${DOTNET_5_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_5_SHA} dotnet.tar.gz" | sha512sum -c - \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
-  && rm dotnet.tar.gz
 
 # Install .NET Core 3.1 SDK - To support 3.1 LTS projects and 3.1 tools, e.g., JetBrains 'jb'.
 #   See: https://github.com/dotnet/dotnet-docker/blob/c0d0ee41932ff30f1eb2e9a1dd0faf92b3dceb9c/src/sdk/3.1/buster/amd64/Dockerfile
