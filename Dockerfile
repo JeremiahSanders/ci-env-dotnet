@@ -11,7 +11,7 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.400-1
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=16.17.0
 ARG DOTNETCORE_31_VERSION=3.1.422
 ARG DOTNETCORE_31_SHA=690759982b12cce7a06ed22b9311ec3b375b8de8600bd647c0257c866d2f9c99d7c9add4a506f4c6c37ef01db85c0f7862d9ae3de0d11e9bec60958bd1b3b72c
 
