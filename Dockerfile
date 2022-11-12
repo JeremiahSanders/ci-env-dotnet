@@ -5,13 +5,15 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:6.0.402
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.100
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=16.18.0
+ARG DOTNET_6_VERSION=6.0.403
+ARG DOTNET_6_SHA=779b3e24a889dbb517e5ff5359dab45dd3296160e4cb5592e6e41ea15cbf87279f08405febf07517aa02351f953b603e59648550a096eefcb0a20fdaf03fadde
 ARG DOTNETCORE_31_VERSION=3.1.424
 ARG DOTNETCORE_31_SHA=5f9fc353eb826c99952582a27b31c495a9cffae544fbb9b52752d2ff9ca0563876bbeab6dc8fe04366c23c783a82d080914ebc1f0c8d6d20c4f48983c303bf18
 
@@ -101,13 +103,25 @@ RUN apt-get update \
   -y \
   && rm -rf /var/lib/apt/lists/*
 
+# Install .NET 6 SDK
+#   See: https://github.com/dotnet/dotnet-docker/blob/b5386162bf4ccc311b70fa97b3217e073fb8eca2/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
+RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_6_VERSION}/dotnet-sdk-${DOTNET_6_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_6_SHA} dotnet.tar.gz" | sha512sum -c - \
+  && mkdir -p /usr/share/dotnet \
+  && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
 # Install .NET Core 3.1 SDK - To support 3.1 LTS projects and 3.1 tools, e.g., JetBrains 'jb'.
 #   See: https://github.com/dotnet/dotnet-docker/blob/c0d0ee41932ff30f1eb2e9a1dd0faf92b3dceb9c/src/sdk/3.1/buster/amd64/Dockerfile
 RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCORE_31_VERSION}/dotnet-sdk-${DOTNETCORE_31_VERSION}-linux-x64.tar.gz \
   && echo "${DOTNETCORE_31_SHA} dotnet.tar.gz" | sha512sum -c - \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
-  && rm dotnet.tar.gz
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
 
 # Add global NPM packages
 #   AWS CDK    - AWS infrastructure-as-code
