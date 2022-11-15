@@ -14,6 +14,10 @@ FROM ${DOTNET_SDK_IMAGE} AS build-environment
 ARG NODE_VERSION=16.18.0
 ARG DOTNET_6_VERSION=6.0.403
 ARG DOTNET_6_SHA=779b3e24a889dbb517e5ff5359dab45dd3296160e4cb5592e6e41ea15cbf87279f08405febf07517aa02351f953b603e59648550a096eefcb0a20fdaf03fadde
+ARG DOTNET_6_RUNTIME_VERSION=6.0.11
+ARG DOTNET_6_RUNTIME_SHA=9462d73fd3f72efaa2fb4aa472055f388da4915e75cfc123298b3494f1dfd8d48c44bfa6cd5c41678ab7353d9085d05dd7f1fee0eef20c11742446e3591e45df
+ARG ASPNET_6_RUNTIME_VERSION=6.0.11
+ARG ASPNET_6_RUNTIME_SHA=12a30719aacd5b3dd444d075c13966a4bb1dc149c36bcbc0e685730f08d1c75eb3929749b89a88569ddb48bd8104db84aaee2ee097ac3a5fe6fff60c9f09f741
 ARG DOTNETCORE_31_VERSION=3.1.424
 ARG DOTNETCORE_31_SHA=5f9fc353eb826c99952582a27b31c495a9cffae544fbb9b52752d2ff9ca0563876bbeab6dc8fe04366c23c783a82d080914ebc1f0c8d6d20c4f48983c303bf18
 
@@ -120,6 +124,26 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
   && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install .NET 6 runtime (for LTS tools)
+#   See: https://github.com/dotnet/dotnet-docker/blob/9b731e901dd4a343fc30da7b8b3ab7d305a4aff9/src/runtime/6.0/bullseye-slim/amd64/Dockerfile
+RUN curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_6_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_6_RUNTIME_SHA}  dotnet.tar.gz" | sha512sum -c - \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install ASP.NET Core 6 runtime (for LTS tools)
+#   See: https://github.com/dotnet/dotnet-docker/blob/9b731e901dd4a343fc30da7b8b3ab7d305a4aff9/src/aspnet/6.0/bullseye-slim/amd64/Dockerfile
+RUN curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${ASPNET_6_RUNTIME_SHA}  aspnetcore.tar.gz" | sha512sum -c - \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
+  && rm aspnetcore.tar.gz \
   # Trigger first run experience by running arbitrary cmd
   && dotnet help
 
