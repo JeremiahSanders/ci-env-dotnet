@@ -6,7 +6,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` (`STS`) version and all [currently-supported][dotnet-support-policy] `LTS` versions.
-  * Currently: `7.0.100` (`STS`); `6.0.403` (`LTS`)
+  * Currently: `7.0.102` (`STS`); `6.0.403` (`LTS`)
 * .NET Core SDK
   * All currently-supported `LTS` versions.
   * Currently: `3.1.424`
