@@ -13,15 +13,13 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.102
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=16.18.0
+ARG NODE_VERSION=18.14.0
 ARG DOTNET_6_VERSION=6.0.405
 ARG DOTNET_6_SHA=44e719c67dd06c73a8736ab63423d735850bc607adf4b8a9f4123945b13014f8144b4fb2c4cfe790d323106b7ce604388cc5d617bc153fd7820878b9187a2cd4
 ARG DOTNET_6_RUNTIME_VERSION=6.0.13
 ARG DOTNET_6_RUNTIME_SHA=af52e1df5e48a1b7465f8137048e9ec292104526c65e415055e5f4630a13f1d4974ae831a143dd4f17e2a813502d90e2c0aef37c6b1eb7a23d01af7ffca5400a
 ARG ASPNET_6_RUNTIME_VERSION=6.0.13
 ARG ASPNET_6_RUNTIME_SHA=96239951972a04021b1953581c88a3e1e64553d05278fb92729c62827f38eeecd533845d6b0d3e9ba97e9d19701b9ee8e5c02d1ee54b8c14efe54c08c45c15a0
-ARG DOTNETCORE_31_VERSION=3.1.424
-ARG DOTNETCORE_31_SHA=5f9fc353eb826c99952582a27b31c495a9cffae544fbb9b52752d2ff9ca0563876bbeab6dc8fe04366c23c783a82d080914ebc1f0c8d6d20c4f48983c303bf18
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -115,16 +113,6 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
   && echo "${DOTNET_6_SHA} dotnet.tar.gz" | sha512sum -c - \
   && mkdir -p /usr/share/dotnet \
   && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
-  && rm dotnet.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
-
-# Install .NET Core 3.1 SDK - To support 3.1 LTS projects and 3.1 tools, e.g., JetBrains 'jb'.
-#   See: https://github.com/dotnet/dotnet-docker/blob/c0d0ee41932ff30f1eb2e9a1dd0faf92b3dceb9c/src/sdk/3.1/buster/amd64/Dockerfile
-RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCORE_31_VERSION}/dotnet-sdk-${DOTNETCORE_31_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNETCORE_31_SHA} dotnet.tar.gz" | sha512sum -c - \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
   && rm dotnet.tar.gz \
   # Trigger first run experience by running arbitrary cmd
   && dotnet help
