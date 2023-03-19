@@ -6,7 +6,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` (`STS`) version and all [currently-supported][dotnet-support-policy] `LTS` versions.
-  * Currently: `7.0.102` (`STS`); `6.0.405` (`LTS`)
+  * Currently: `7.0.202` (`STS`); `6.0.405` (`LTS`)
 * node.js
   * Current `LTS` version.
   * Currently: `18.14.0` (includes `npm` `9.3.1`)
@@ -14,9 +14,9 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 ## Included Shells
 
 * `bash` (Provided by base .NET image)
-  * GNU bash, version `5.1.4(1)-release` (as of 2022/05/18)
+  * GNU bash, version `5.1.4(1)-release` (as of 2023/03/19)
 * `pwsh` (Provided by base .NET image)
-  * PowerShell `7.3.0` (as of 2022/11/12)
+  * PowerShell `7.3.3` (as of 2023/03/19)
 * `sh` (Provided by base .NET image)
 
 ## Included Tools
