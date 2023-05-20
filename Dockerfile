@@ -5,7 +5,7 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.202
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.302
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
@@ -13,13 +13,13 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.202
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=18.15.0
-ARG DOTNET_6_VERSION=6.0.407
-ARG DOTNET_6_SHA=3cc230f21c0d60ffa4955c01d79cbb41887a41f4e97d0708170e4be8e4dc5bc261269c788c738416c28bbc7e8c6940a89cf3d010f16d1dc4cf25bbb0e2c033c1
-ARG DOTNET_6_RUNTIME_VERSION=6.0.15
-ARG DOTNET_6_RUNTIME_SHA=681928ab5050da89302518445f4e7e00738530b3941434fad363724ad5b1f9bcdc52717332613d2e33733ebf835eb550628e87cebba1a12ffb4f881c8e767749
-ARG ASPNET_6_RUNTIME_VERSION=6.0.15
-ARG ASPNET_6_RUNTIME_SHA=db41bbd6ffb061402acee12f498f41fe5987d355c9004091ff63010303cc9ea969ab233986dc11556bc6def5194883f50fdf216e1c50b26bb60cacd4f2ecd98a
+ARG NODE_VERSION=18.16.0
+ARG DOTNET_6_VERSION=6.0.408
+ARG DOTNET_6_SHA=d5eed37ce6c07546aa217d6e786f3b67be2b6d97c23d5888d9ee5d5398e8a9bfc06202b14e3529245f7ec78f4036778caf69bdbe099de805fe1f566277e8440e
+ARG DOTNET_6_RUNTIME_VERSION=6.0.16
+ARG DOTNET_6_RUNTIME_SHA=c8891b791a51e7d2c3164470dfd2af2ce59af3c26404e84075277e307df7dcd1e3ccf1a1a3c2655fe2eea8a30f8349b7adbbe5de4cedfee52da06729a505d8f5
+ARG ASPNET_6_RUNTIME_VERSION=6.0.16
+ARG ASPNET_6_RUNTIME_SHA=62f25ed054868155b351b98fdd04c27aebd913d92844430a002da1346e77a8e86e61833f7b81bdc3d733ff2ae60a21d66533cdd7003b2fee47b8d0e8746ad504
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/27f5a992bc36a3ef61157ce7dc28d98c5aceb744/16/buster/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/4c95f887f7863eccc17d66729cd24ecc230209a2/18/bullseye/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
@@ -55,6 +55,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   4ED778F539E3634C779C87C6D7062848A1AB005C \
   141F07595B7B3FFE74309A937405533BE57C7D57 \
   74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+  DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
   61FC681DFB92A079F1685E77973F295594EC4689 \
   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
