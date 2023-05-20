@@ -13,7 +13,7 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.302
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=18.15.0
+ARG NODE_VERSION=18.16.0
 ARG DOTNET_6_VERSION=6.0.408
 ARG DOTNET_6_SHA=d5eed37ce6c07546aa217d6e786f3b67be2b6d97c23d5888d9ee5d5398e8a9bfc06202b14e3529245f7ec78f4036778caf69bdbe099de805fe1f566277e8440e
 ARG DOTNET_6_RUNTIME_VERSION=6.0.16
@@ -38,7 +38,7 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/27f5a992bc36a3ef61157ce7dc28d98c5aceb744/16/buster/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/4c95f887f7863eccc17d66729cd24ecc230209a2/18/bullseye/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
@@ -55,6 +55,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   4ED778F539E3634C779C87C6D7062848A1AB005C \
   141F07595B7B3FFE74309A937405533BE57C7D57 \
   74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+  DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
   61FC681DFB92A079F1685E77973F295594EC4689 \
   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
