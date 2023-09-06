@@ -15,10 +15,8 @@ jobs:
     steps:
       - name: Checkout latest commit
         uses: actions/checkout@v2
-      - name: Install CICEE
-        run: dotnet tool install -g cicee || dotnet tool update -g cicee
       - name: Execute publish script - Publish project artifacts
-        run: cicee exec -c ci/bin/publish.sh
+        run: ci/bin/publish.sh
         env:
           DOCKER_IMAGE_REPOSITORY: ${{secrets.DOCKER_IMAGE_REPOSITORY}}
           DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
