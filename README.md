@@ -9,7 +9,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
   * Currently: `7.0.403` (`STS`); `6.0.416` (`LTS`)
 * node.js
   * Current `LTS` version.
-  * Currently: `18.16.0` (includes `npm` `9.5.1`)
+  * Currently: `18.18.2` (includes `npm` `9.8.1`)
 
 ## Included Shells
 
