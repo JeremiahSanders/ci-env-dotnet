@@ -11,9 +11,10 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.403
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
 # https://hub.docker.com/_/microsoft-dotnet-runtime/
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
+# https://hub.docker.com/_/node/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=18.16.0
+ARG NODE_VERSION=18.18.2
 ARG DOTNET_6_VERSION=6.0.416
 ARG DOTNET_6_SHA=5a3c60c73b68e9527406a93c9cc18941d082ac988d0b4bfea277da3465c71777dded1b3389f0dde807eda6a8186fcf68d617d2473a52203cb75127ab3dafc64d
 ARG DOTNET_6_RUNTIME_VERSION=6.0.24
@@ -38,7 +39,7 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/4c95f887f7863eccc17d66729cd24ecc230209a2/18/bullseye/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/bdf5edb771596f7e3998ff318c3098850261b17b/18/bookworm/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
