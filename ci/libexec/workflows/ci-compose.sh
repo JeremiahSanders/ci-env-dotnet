@@ -25,10 +25,9 @@ function ci-compose() {
     fi
   }
 
-  ci-docker-build &&
-    __conditionallyTagLatest
-
-  printf "Composition complete.\n"
+  docker_build_xarch_image &&
+    __conditionallyTagLatest &&
+    printf "Composition complete.\n"
 }
 
 export -f ci-compose

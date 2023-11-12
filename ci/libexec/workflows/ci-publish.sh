@@ -26,10 +26,9 @@ function ci-publish() {
   }
 
   docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
-    ci-docker-push &&
-    __conditionallyPushLatest
-
-  printf "Publishing complete.\n\n"
+    docker_publish_xarch_image &&
+    __conditionallyPushLatest &&
+    printf "Publishing complete.\n\n"
 }
 
 export -f ci-publish

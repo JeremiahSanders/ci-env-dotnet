@@ -18,9 +18,8 @@ set -o pipefail # Fail pipelines if any command errors, not just the last one.
 function ci-validate() {
   printf "Beginning validation...\n\n"
 
-  ci-docker-build
-
-  printf "Validation complete!\n\n"
+  docker_build_xarch_image &&
+    printf "Validation complete!\n\n"
 }
 
 export -f ci-validate

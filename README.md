@@ -36,6 +36,8 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 | [TypeScript][typescript]                  |             | Enables TypeScript language support in node.js.                        |
 | [zip][]                                   | `zip`       | Enables compressing build artifacts.                                   |
 
+> **ARM64 Note**: .NET global tools are **not** installed on ARM64 images, due to unresolved `dotnet tool install --global` errors. The following tools listed above are not available on ARM64: `cicee`, `coverlet`, `fantomas`, and `jb`. Projects using those tools in ARM64 environments must install them as .NET local tools, if possible.
+
 [aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
 [cdk]: https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html
 [cicee]: https://github.com/JeremiahSanders/cicee
