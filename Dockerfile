@@ -16,11 +16,14 @@ FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=18.18.2
 ARG DOTNET_6_VERSION=6.0.416
-ARG DOTNET_6_SHA=5a3c60c73b68e9527406a93c9cc18941d082ac988d0b4bfea277da3465c71777dded1b3389f0dde807eda6a8186fcf68d617d2473a52203cb75127ab3dafc64d
+ARG DOTNET_6_SHA_AMD64=5a3c60c73b68e9527406a93c9cc18941d082ac988d0b4bfea277da3465c71777dded1b3389f0dde807eda6a8186fcf68d617d2473a52203cb75127ab3dafc64d
+ARG DOTNET_6_SHA_ARM64=b121ba30bd8bab2f8744f32442d93807b60dac90f8b6caa395d87151b2ffc335f93a95843f08a412d0b90c82d587301b73ea96f5a520658be729c65a061a8a80
 ARG DOTNET_6_RUNTIME_VERSION=6.0.24
-ARG DOTNET_6_RUNTIME_SHA=3a72ddae17ecc9e5354131f03078f3fbfa1c21d26ada9f254b01cddcb73869cb33bac5fc0aed2200fbb57be939d65829d8f1514cd0889a2f5858d1f1eec136eb
+ARG DOTNET_6_RUNTIME_SHA_AMD64=3a72ddae17ecc9e5354131f03078f3fbfa1c21d26ada9f254b01cddcb73869cb33bac5fc0aed2200fbb57be939d65829d8f1514cd0889a2f5858d1f1eec136eb
+ARG DOTNET_6_RUNTIME_SHA_ARM64=43ec6b177d18ad5dbdd83392f861668ea71160b01f7540c18eee425d24ad0b5eee88dfc0f4ad9ec1cca2d8cf09bca4ac806d8e0f315b52c7b4a7a969532feacc
 ARG ASPNET_6_RUNTIME_VERSION=6.0.24
-ARG ASPNET_6_RUNTIME_SHA=b14ed20bb6c2897fb05cf11154aa22df3c68b6f90d2e9bc6ccc623897a565f51c3007c9a6edcdbab2090c710047a3d8eed0bcc6df19f3993d1be4c6387238da5
+ARG ASPNET_6_RUNTIME_SHA_AMD64=b14ed20bb6c2897fb05cf11154aa22df3c68b6f90d2e9bc6ccc623897a565f51c3007c9a6edcdbab2090c710047a3d8eed0bcc6df19f3993d1be4c6387238da5
+ARG ASPNET_6_RUNTIME_SHA_ARM64=db5de0888441e93466f84aac459d5ea0c9079c9b8e00308abb0ccc687922bbe48ace22b5cbdeb0f38d89cd115440deab5d0b4f1499611822dfb8a0e9f13c4309
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -100,7 +103,7 @@ RUN apt-get update \
   -y \
   && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
   && add-apt-repository \
-  "deb [arch=amd64] https://download.docker.com/linux/debian \
+  "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian \
   $(lsb_release -cs) \
   stable" \
   && apt-get update \
@@ -110,9 +113,15 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # Install .NET 6 SDK
-#   See: https://github.com/dotnet/dotnet-docker/blob/b5386162bf4ccc311b70fa97b3217e073fb8eca2/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
-RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_6_VERSION}/dotnet-sdk-${DOTNET_6_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_6_SHA} dotnet.tar.gz" | sha512sum -c - \
+#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/sdk/6.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_6_VERSION}/dotnet-sdk-${DOTNET_6_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_6_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_6_VERSION}/dotnet-sdk-${DOTNET_6_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_6_SHA_AMD64} dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
   && mkdir -p /usr/share/dotnet \
   && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
   && rm dotnet.tar.gz \
@@ -120,9 +129,15 @@ RUN curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$
   && dotnet help
 
 # Install .NET 6 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/9b731e901dd4a343fc30da7b8b3ab7d305a4aff9/src/runtime/6.0/bullseye-slim/amd64/Dockerfile
-RUN curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_6_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_6_RUNTIME_SHA}  dotnet.tar.gz" | sha512sum -c - \
+#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/runtime/6.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/runtime/6.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_6_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_6_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_6_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_6_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_6_RUNTIME_SHA_AMD64}  dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
   && rm dotnet.tar.gz \
@@ -130,9 +145,15 @@ RUN curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runt
   && dotnet help
 
 # Install ASP.NET Core 6 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/9b731e901dd4a343fc30da7b8b3ab7d305a4aff9/src/aspnet/6.0/bullseye-slim/amd64/Dockerfile
-RUN curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${ASPNET_6_RUNTIME_SHA}  aspnetcore.tar.gz" | sha512sum -c - \
+#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/aspnet/6.0/bullseye-slim/amd64/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/aspnet/6.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${ASPNET_6_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${ASPNET_6_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  fi \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
   && rm aspnetcore.tar.gz \
@@ -154,7 +175,11 @@ ENV PATH="${PATH}:/root/.dotnet/tools"
 #     https://github.com/fsprojects/fantomas/blob/master/docs/Documentation.md#using-the-command-line-tool
 #   resharper command line tools - to provide .NET CI capabilities
 #     https://www.jetbrains.com/help/resharper/ReSharper_Command_Line_Tools.html
-RUN  dotnet tool install --global cicee \
-  && dotnet tool install --global coverlet.console \
-  && dotnet tool install --global fantomas-tool \
-  && dotnet tool install --global JetBrains.ReSharper.GlobalTools
+RUN if [ "$(uname -m)" = "aarch64" ]; then \
+  echo "Skipping dotnet commands for ARM64 environment due to 'dotnet tool install --global' installation errors."; \
+  else \
+  dotnet tool install --global fantomas-tool && \
+  dotnet tool install --global coverlet.console && \
+  dotnet tool install --global JetBrains.ReSharper.GlobalTools && \
+  dotnet tool install --global cicee; \
+  fi
