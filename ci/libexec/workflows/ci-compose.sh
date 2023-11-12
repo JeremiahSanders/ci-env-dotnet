@@ -19,14 +19,7 @@ set -o pipefail # Fail pipelines if any command errors, not just the last one.
 function ci-compose() {
   printf "Composing build artifacts...\n\n"
 
-  __conditionallyTagLatest() {
-    if [[ "${RELEASE_ENVIRONMENT:-false}" = true ]]; then
-      docker tag "${DOCKER_IMAGE}" "${DOCKER_IMAGE_REPOSITORY}:latest"
-    fi
-  }
-
   docker_build_xarch_image &&
-    __conditionallyTagLatest &&
     printf "Composition complete.\n"
 }
 

@@ -19,15 +19,8 @@ set -o pipefail # Fail pipelines if any command errors, not just the last one.
 function ci-publish() {
   printf "Publishing composed artifacts...\n\n"
 
-  __conditionallyPushLatest() {
-    if [[ "${RELEASE_ENVIRONMENT:-false}" = true ]]; then
-      docker push "${DOCKER_IMAGE_REPOSITORY}:latest"
-    fi
-  }
-
   docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}" &&
     docker_publish_xarch_image &&
-    __conditionallyPushLatest &&
     printf "Publishing complete.\n\n"
 }
 
