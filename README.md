@@ -6,7 +6,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` (`STS`) version and all [currently-supported][dotnet-support-policy] `LTS` versions.
-  * Currently: `7.0.403` (`STS`); `6.0.416` (`LTS`)
+  * Currently: `8.0.100` (`LTS`); `7.0.404` (`STS`); `6.0.416` (`LTS`)
 * node.js
   * Current `LTS` version.
   * Currently: `18.18.2` (includes `npm` `9.8.1`)
@@ -36,6 +36,8 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 | [TypeScript][typescript]                  |             | Enables TypeScript language support in node.js.                        |
 | [zip][]                                   | `zip`       | Enables compressing build artifacts.                                   |
 
+> **Docker CLI Note**: `docker` CLI is provided by Debian's `docker.io` (not `docker-ce-cli`).
+>
 > **ARM64 Note**: .NET global tools are **not** installed on ARM64 images, due to unresolved `dotnet tool install --global` errors. The following tools listed above are not available on ARM64: `cicee`, `coverlet`, `fantomas`, and `jb`. Projects using those tools in ARM64 environments must install them as .NET local tools, if possible.
 
 [aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
