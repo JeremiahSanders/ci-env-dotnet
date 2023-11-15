@@ -5,7 +5,7 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.403
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.100
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
@@ -15,6 +15,15 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:7.0.403
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=18.18.2
+ARG DOTNET_7_VERSION=7.0.404
+ARG DOTNET_7_SHA_AMD64=f5c122044e9a107968af1a534051e28242f45307c3db760fbb4f3a003d92d8ea5a856ad4c4e8e4b88a3b6a825fe5e3c9e596c9d2cfa0eca8d5d9ee2c5dad0053
+ARG DOTNET_7_SHA_ARM64=b7131829d08dadbfd3b55a509e2d9a9de90b7447e27187bd717cebf1b134bd0ddfcb9285032f2ce08bd427487125e8b3e9cdc99b7f92436901e803e65f1581de
+ARG DOTNET_7_RUNTIME_VERSION=7.0.14
+ARG DOTNET_7_RUNTIME_SHA_AMD64=02fd66ef2059d124d9c4f3fbfd0d5b0375b83610cdf51a2972567e4bdaf1d55e532478533509ec2408c371e7fdd6efea8e9b9aec9eb5cd703e8e5d2814ef319b
+ARG DOTNET_7_RUNTIME_SHA_ARM64=cf2dc2997b10148b558f78b2f2401acc83921a6b721c11199ac7dc77d8c9fb5500d7be092281f13f3c9b4287dedc6fdb56f242d9340568a0fc021055983f9cd8
+ARG ASPNET_7_RUNTIME_VERSION=7.0.14
+ARG ASPNET_7_RUNTIME_SHA_AMD64=00f55556cb580d81bf0059a61a642ed8b405452d55e94460c03a0edec9a4f608fd78561560e5fc5bf6e42fb1f45420eba75f8d102d8bd46686379dab7ffde6f6
+ARG ASPNET_7_RUNTIME_SHA_ARM64=577d927686639241c00e2f07fcb11eb878d671e926c6fc058f879619452ab0af675db4c2dfd8aa9290f03cb11afcf5094be1beeb5fae491f50520e171e732a71
 ARG DOTNET_6_VERSION=6.0.416
 ARG DOTNET_6_SHA_AMD64=5a3c60c73b68e9527406a93c9cc18941d082ac988d0b4bfea277da3465c71777dded1b3389f0dde807eda6a8186fcf68d617d2473a52203cb75127ab3dafc64d
 ARG DOTNET_6_SHA_ARM64=b121ba30bd8bab2f8744f32442d93807b60dac90f8b6caa395d87151b2ffc335f93a95843f08a412d0b90c82d587301b73ea96f5a520658be729c65a061a8a80
@@ -95,22 +104,58 @@ RUN mkdir "/aws-install" \
 #   Docker CLI
 RUN apt-get update \
   && apt-get install \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  gnupg-agent \
-  software-properties-common \
-  -y \
-  && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
-  && add-apt-repository \
-  "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/debian \
-  $(lsb_release -cs) \
-  stable" \
-  && apt-get update \
-  && apt-get install \
-  docker-ce-cli \
+  docker.io \
   -y \
   && rm -rf /var/lib/apt/lists/*
+
+# Install .NET 7 SDK
+#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/sdk/7.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/sdk/7.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_7_VERSION}/dotnet-sdk-${DOTNET_7_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_7_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_7_VERSION}/dotnet-sdk-${DOTNET_7_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_7_SHA_AMD64} dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+
+# Install .NET 7 runtime (for STS tools)
+#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/runtime/7.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/runtime/7.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_7_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_7_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_7_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_7_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_7_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_7_RUNTIME_SHA_AMD64}  dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install ASP.NET Core 7 runtime (for STS tools)
+#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/aspnet/7.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/aspnet/7.0/bullseye-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_7_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_7_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${ASPNET_7_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_7_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_7_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${ASPNET_7_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
+  && rm aspnetcore.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
 
 # Install .NET 6 SDK
 #   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
