@@ -14,7 +14,7 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.201
 # https://hub.docker.com/_/node/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=18.18.2
+ARG NODE_VERSION=18.19.1
 ARG DOTNET_7_VERSION=7.0.406
 ARG DOTNET_7_SHA_AMD64=5455ac21b1d8a37da326b99128a7d10983673259f4ccf89b7cdc6f67bb5f6d4f123caadb9532d523b2d9025315e3de684a63a09712e2dc6de1702f5ad1e9c410
 ARG DOTNET_7_SHA_ARM64=7543ab3197653864aa72c2f711e0661a881d7c74ef861fb1e952b15b7f8efd909866e99ea0e43430768db223b79d4e0285f3114087b6e009b5d382b4adad13fc
@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install \
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/bdf5edb771596f7e3998ff318c3098850261b17b/18/bookworm/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/a54ad036b53ed4d64744aa5aba25e78be5e4e7b1/18/bookworm/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
   amd64) ARCH='x64';; \
@@ -75,6 +75,7 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
   C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
   108F52B48DB57BB0CC439B2997B01419BD92F80A \
+  A363A499291CBBC940DD62E41F10027AF002F8B0 \
   ; do \
   gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
   gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
