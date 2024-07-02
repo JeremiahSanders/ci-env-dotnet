@@ -5,7 +5,7 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.203
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.302
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
@@ -15,24 +15,16 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.203
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=18.19.1
-ARG DOTNET_7_VERSION=7.0.407
-ARG DOTNET_7_SHA_AMD64=82e659aee7d3ab6595bfc141f24eda13551f5c5bd9048aad53ebe3963b8e25836ca07eb3d1d39d6adae145db399aab44ed57db27d34119e836202eb3af93c9e3
-ARG DOTNET_7_SHA_ARM64=94c5832ee830035a1329f28c5bf12651537c61b013d9f1afae2ef495f62b93f615c0940754a815f03612125683c242e98e8a9d28912b2eff26f44d998ed6e680
-ARG DOTNET_7_RUNTIME_VERSION=7.0.17
-ARG DOTNET_7_RUNTIME_SHA_AMD64=bf65378d4e9b1f14559dbe4a0bf5fb7e66fdf9a7bef9d109deccb22fae8a5cac9b5af5df4b67321dbd5f34764d911ba580c62b0456da648a57e94f82be7e4abc
-ARG DOTNET_7_RUNTIME_SHA_ARM64=f3a23da65f11bc43a4ea8722a872132a16d76982da1445b79fbfc8e5b2b38f904fdd22c986a0598d5565dbbf104b4e852ac2bebb7d79cefd20b9b5a1d40036f0
-ARG ASPNET_7_RUNTIME_VERSION=7.0.17
-ARG ASPNET_7_RUNTIME_SHA_AMD64=a0cc7f76f24d123fbe787ff3b554736000c3f6b4f7b919819fb3039f6df4a15d28713a0a169c9493012e14afc3a0299f3d800d93d6749a70b567833ef3f3aeed
-ARG ASPNET_7_RUNTIME_SHA_ARM64=a5b6c6a262334506675447d157d7b4e5683c77715b74f97c9b219166bf9226a20d5194ff1c5eb8e17b625a17f8fd114da4b44ad19888760956ff735facd1d41e
-ARG DOTNET_6_VERSION=6.0.420
-ARG DOTNET_6_SHA_AMD64=53d6e688d0aee8f73edf3ec8e58ed34eca0873a28f0700b71936b9d7cb351864eff8ca593db7fd77659b1710fa421d2f4137da5f98746a85125dc2a49fbffc56
-ARG DOTNET_6_SHA_ARM64=6625ab63705bcdeba990baf21a54c6ddc0fc399ee374e60d307724febd6dd1ca4f64f697041ec4a6f68f3e4c57765cc3da2f1d51591ec5eec6d544c8aee4f9cb
-ARG DOTNET_6_RUNTIME_VERSION=6.0.28
-ARG DOTNET_6_RUNTIME_SHA_AMD64=5e9039c6c83bed02280e6455ee9ec59c9509055ed15d20fb628eca1147c6c3b227579fbffe5d890879b8e62312facf25089b81f4c461797a1a701a220b51d698
-ARG DOTNET_6_RUNTIME_SHA_ARM64=84b9b2d9e2e9c8f1f8a35b184fbe6883c469224e72635efdd1802fd4c24a56b672427ec016d8f57b7c1bed4342cc77b7af1a613b225b1259ccbe634e75799d58
-ARG ASPNET_6_RUNTIME_VERSION=6.0.28
-ARG ASPNET_6_RUNTIME_SHA_AMD64=52675b81e026b4b673aedb2d9ee99a79ccb47eab090a059ef9b95615befc034ef7fbe674b01ae813870f73dcdbcfa32906969860a464aa5d356c004b6bfb201b
-ARG ASPNET_6_RUNTIME_SHA_ARM64=932773d9aecfe3918c0479f44d5ca7d643cc7bbe632421ea78326605dd374e9df904f49a2c4279cab0af16be55f41c8fb8e04590aef55ce13c728f9a64d3015f
+
+ARG DOTNET_6_VERSION=6.0.423
+ARG DOTNET_6_SHA_AMD64=4b4a0e66634211ae04fa030e18ae9e22640f5828307ba85c4bae596ab2d31260519197828dae3b2ec73d6772635e0b375536ea6591b03c67c2b7a5566f016952
+ARG DOTNET_6_SHA_ARM64=42f5e89d6d9a9923bbc20398a6272290b5f693cc767aa540233630f849779daa8cc7d8ac87655f6b2c8e0250bf5be986a8e8ae502b6f33c0b3e474d041b77625
+ARG DOTNET_6_RUNTIME_VERSION=6.0.31
+ARG DOTNET_6_RUNTIME_SHA_AMD64=8df8d8bfe24104f41cc9715bb04fdc1811426c4d16f29336607c68a30d245fb8f36577d639e7da4865204fa85280fb5cdcf47e93183afe6b9e946e0c53df32c8
+ARG DOTNET_6_RUNTIME_SHA_ARM64=022c7fc8878544f8abde8cf13ef661327238381c8f4731b4975be294616fda00a4b093036a896baef99eb58b881890d3fa951cc51b0212e766a8a7ce95d2c440
+ARG ASPNET_6_RUNTIME_VERSION=6.0.31
+ARG ASPNET_6_RUNTIME_SHA_AMD64=ebb20a3461bf9d1e3a5c91761452f5ef2e60873826ad3158493768a18d207319bccc40d6c1a64fd61dd8c22bad51c26689394b0e6a40c4bfe4cca00ce4c00db1
+ARG ASPNET_6_RUNTIME_SHA_ARM64=5d395554520a62c81e01f045245749d771d728a353631879462ac499e78658377e475bca756668eeafdd65ac55ad55f244f778809c127a553c5c330b76ef9dd8
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -109,58 +101,9 @@ RUN apt-get update \
   -y \
   && rm -rf /var/lib/apt/lists/*
 
-# Install .NET 7 SDK
-#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/sdk/7.0/bullseye-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/sdk/7.0/bullseye-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_7_VERSION}/dotnet-sdk-${DOTNET_7_VERSION}-linux-arm64.tar.gz \
-  && echo "${DOTNET_7_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_7_VERSION}/dotnet-sdk-${DOTNET_7_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_7_SHA_AMD64} dotnet.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
-  && rm dotnet.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
-
-
-# Install .NET 7 runtime (for STS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/runtime/7.0/bullseye-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/runtime/7.0/bullseye-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_7_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_7_RUNTIME_VERSION}-linux-arm64.tar.gz \
-  && echo "${DOTNET_7_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_7_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_7_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_7_RUNTIME_SHA_AMD64}  dotnet.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
-  && rm dotnet.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
-
-# Install ASP.NET Core 7 runtime (for STS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/aspnet/7.0/bullseye-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/blob/4a40f7eeecad2a3f15541fbb84962f8789d23cb0/src/aspnet/7.0/bullseye-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_7_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_7_RUNTIME_VERSION}-linux-arm64.tar.gz \
-  && echo "${ASPNET_7_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_7_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_7_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${ASPNET_7_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
-  && rm aspnetcore.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
-
 # Install .NET 6 SDK
-#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/sdk/6.0/bullseye-slim/arm64v8/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/6.0/bullseye-slim/arm64v8/Dockerfile
 RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_6_VERSION}/dotnet-sdk-${DOTNET_6_VERSION}-linux-arm64.tar.gz \
   && echo "${DOTNET_6_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
@@ -175,8 +118,8 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   && dotnet help
 
 # Install .NET 6 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/runtime/6.0/bullseye-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/runtime/6.0/bullseye-slim/arm64v8/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/6.0/bullseye-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/6.0/bullseye-slim/arm64v8/Dockerfile
 RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_6_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_6_RUNTIME_VERSION}-linux-arm64.tar.gz \
   && echo "${DOTNET_6_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
@@ -191,8 +134,8 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   && dotnet help
 
 # Install ASP.NET Core 6 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/aspnet/6.0/bullseye-slim/amd64/Dockerfile
-#   See: https://github.com/dotnet/dotnet-docker/blob/865bcccb010b1a703c23d584153f1168754dc42e/src/aspnet/6.0/bullseye-slim/arm64v8/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/6.0/bullseye-slim/amd64/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/6.0/bullseye-slim/arm64v8/Dockerfile
 RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-arm64.tar.gz \
   && echo "${ASPNET_6_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
@@ -229,3 +172,10 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
   dotnet tool install --global JetBrains.ReSharper.GlobalTools && \
   dotnet tool install --global cicee; \
   fi
+
+# Add the 'cicee' containerized CI mount directory (/code) to Git safe directories.
+#   This is required to allow Git commands to function in the containerized environment.
+#   The 'cicee' tool's shell scripts use Git to create prerelease versions based upon current commit hash.
+#   See: https://git-scm.com/docs/git-config#Documentation/git-config.txt-safedirectory
+#   NOTE: The '/code' directory is not initialized in this image. Thus, this should not be a safety concern.
+RUN git config --global --add safe.directory /code
