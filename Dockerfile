@@ -172,3 +172,10 @@ RUN if [ "$(uname -m)" = "aarch64" ]; then \
   dotnet tool install --global JetBrains.ReSharper.GlobalTools && \
   dotnet tool install --global cicee; \
   fi
+
+# Add the 'cicee' containerized CI mount directory (/code) to Git safe directories.
+#   This is required to allow Git commands to function in the containerized environment.
+#   The 'cicee' tool's shell scripts use Git to create prerelease versions based upon current commit hash.
+#   See: https://git-scm.com/docs/git-config#Documentation/git-config.txt-safedirectory
+#   NOTE: The '/code' directory is not initialized in this image. Thus, this should not be a safety concern.
+RUN git config --global --add safe.directory /code

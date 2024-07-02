@@ -39,6 +39,8 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 > **Docker CLI Note**: `docker` CLI is provided by Debian's `docker.io` (not `docker-ce-cli`).
 >
 > **ARM64 Note**: .NET global tools are **not** installed on ARM64 images, due to unresolved `dotnet tool install --global` errors. The following tools listed above are not available on ARM64: `cicee`, `coverlet`, `fantomas`, and `jb`. Projects using those tools in ARM64 environments must install them as .NET local tools, if possible.
+>
+> **Git Note**: This image includes `/code` in its global Git configuration `safe.directory`. (Required to enable [`cicee`][cicee] continuous integration scripts to generate prerelease versions for your code when using `cicee lib exec` within a `cicee exec` environment, which mounts your project code to `/code`.) This image _does not_ initialize the `/code` directory, so this should not be a security concern. However, if you wish to _disable_ this Git safe directory registration when building an image based upon this image, add a `RUN` layer to your `Dockerfile` which [sets the `safe.directory` as shown in Git documentation][git-safe-directory].
 
 [aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html
 [cdk]: https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html
@@ -48,6 +50,7 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 [docker]: https://docs.docker.com/engine/reference/commandline/cli/
 [dotnet-support-policy]: https://dotnet.microsoft.com/platform/support/policy/dotnet-core
 [fantomas]: https://github.com/fsprojects/fantomas/blob/master/docs/Documentation.md#using-the-command-line-tool
+[git-safe-directory]: https://git-scm.com/docs/git-config#Documentation/git-config.txt-safedirectory
 [jq]: https://stedolan.github.io/jq/
 [repository]: https://hub.docker.com/r/gnosian/ci-env-dotnet
 [resharper-tools]: https://www.jetbrains.com/help/resharper/ReSharper_Command_Line_Tools.html
