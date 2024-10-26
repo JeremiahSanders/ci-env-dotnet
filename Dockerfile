@@ -15,6 +15,8 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.403
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
 ARG NODE_VERSION=20.18.0
+ARG NODE_VERSION_18=18.20.4
+ARG NODE_VERSION_20=20.18.0
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
 ARG DOTNET_6_VERSION=6.0.427
@@ -44,47 +46,81 @@ RUN apt-get update && apt-get install \
   -y \
   && rm -rf /var/lib/apt/lists/*
 
-#   node.js
+# Set the default shell to bash
+SHELL ["/bin/bash", "-c"]
+
+# Set environment variables for NVM
+ENV NVM_DIR=/root/.nvm
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/a54ad036b53ed4d64744aa5aba25e78be5e4e7b1/18/bookworm/Dockerfile
-RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-  && case "${dpkgArch##*-}" in \
-  amd64) ARCH='x64';; \
-  ppc64el) ARCH='ppc64le';; \
-  s390x) ARCH='s390x';; \
-  arm64) ARCH='arm64';; \
-  armhf) ARCH='armv7l';; \
-  i386) ARCH='x86';; \
-  *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
-  # gpg keys listed at https://github.com/nodejs/node#release-keys
-  && set -ex \
-  && for key in \
-  4ED778F539E3634C779C87C6D7062848A1AB005C \
-  141F07595B7B3FFE74309A937405533BE57C7D57 \
-  74F12602B6F1C4E913FAA37AD3A89613643B6201 \
-  DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
-  61FC681DFB92A079F1685E77973F295594EC4689 \
-  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-  890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
-  C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-  108F52B48DB57BB0CC439B2997B01419BD92F80A \
-  A363A499291CBBC940DD62E41F10027AF002F8B0 \
-  ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-  && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-  # smoke tests
-  && node --version \
-  && npm --version
+ENV NODE_VERSION_18=${NODE_VERSION_18}
+ENV NODE_VERSION_20=${NODE_VERSION_20}
+
+# Install nvm
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+# Install Node.js versions 18 and 20, and set Node.js 20 as the default
+RUN bash -c "source $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION_18 && \
+    nvm install $NODE_VERSION_20 && \
+    nvm alias default $NODE_VERSION_20"
+    
+# Set the default node version in PATH
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION_20/bin:$PATH
+
+# Verify Node.js installation
+RUN echo "Default Node versions:" && \
+    node -v && npm -v && \
+    source $NVM_DIR/nvm.sh && \
+    nvm use $NODE_VERSION_18 && \
+    echo "NVM's Node18:" && \
+    node -v && npm -v && \
+    nvm use $NODE_VERSION_20 && \
+    echo "NVM's Node20:" && \
+    node -v && npm -v
+
+# #   node.js
+# ENV NODE_VERSION=${NODE_VERSION}
+# #     See: https://github.com/nodejs/docker-node/blob/a54ad036b53ed4d64744aa5aba25e78be5e4e7b1/18/bookworm/Dockerfile
+# RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+#   && case "${dpkgArch##*-}" in \
+#   amd64) ARCH='x64';; \
+#   ppc64el) ARCH='ppc64le';; \
+#   s390x) ARCH='s390x';; \
+#   arm64) ARCH='arm64';; \
+#   armhf) ARCH='armv7l';; \
+#   i386) ARCH='x86';; \
+#   *) echo "unsupported architecture"; exit 1 ;; \
+#   esac \
+#   # gpg keys listed at https://github.com/nodejs/node#release-keys
+#   && set -ex \
+#   && for key in \
+#   4ED778F539E3634C779C87C6D7062848A1AB005C \
+#   141F07595B7B3FFE74309A937405533BE57C7D57 \
+#   74F12602B6F1C4E913FAA37AD3A89613643B6201 \
+#   DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7 \
+#   61FC681DFB92A079F1685E77973F295594EC4689 \
+#   8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
+#   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
+#   890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4 \
+#   C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
+#   108F52B48DB57BB0CC439B2997B01419BD92F80A \
+#   A363A499291CBBC940DD62E41F10027AF002F8B0 \
+#   ; do \
+#   gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
+#   gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
+#   done \
+#   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
+#   && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
+#   && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+#   && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
+#   && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
+#   && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
+#   && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+#   # smoke tests
+#   && node --version \
+#   && npm --version
 
 #   AWS CLI
 RUN mkdir "/aws-install" \
