@@ -8,12 +8,13 @@ on:
 jobs:
   publish-prerelease:
     # ubuntu-latest provides many dependencies.
-    # See: https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+    # See: https://github.com/actions/runner-images
+    # See: https://github.com/actions/runner-images/blob/a1633b01936bfd1fcd4ec9a88d087b0e07e907aa/images/ubuntu/Ubuntu2204-Readme.md
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout latest commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Execute compose script - Create a dry run composition to validate without publishing
         run: ci/bin/compose.sh
         env:
