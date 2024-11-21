@@ -5,7 +5,7 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0.403
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:9.0.100
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
@@ -28,6 +28,19 @@ ARG DOTNET_6_RUNTIME_SHA_ARM64=945e24f9c2d677e65fddaa06cafe8d518ee599ce98883b60f
 ARG ASPNET_6_RUNTIME_VERSION=6.0.35
 ARG ASPNET_6_RUNTIME_SHA_AMD64=d86da938338a6d97250436d49340e8f114c05b46512ca562aadca6f3e77403d36468d3f34ed5f2d935c070f9e14aedf7299f5a03d2964dbd6576b9a2d3e776e8
 ARG ASPNET_6_RUNTIME_SHA_ARM64=c949fd1b9efe9231e4c6e006ef3c4a5aedc1d4ce64ca9bc1cd52f1ce9884ea23837b49f1e6a7ab4b6df0c6f60a32573e2aefde4e14f205812d004b7b9ebe0f76
+
+# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
+ARG DOTNET_8_VERSION=8.0.404
+ARG DOTNET_8_SHA_AMD64=2f166f7f3bd508154d72d1783ffac6e0e3c92023ccc2c6de49d22b411fc8b9e6dd03e7576acc1bb5870a6951181129ba77f3bf94bb45fe9c70105b1b896b9bb9
+ARG DOTNET_8_SHA_ARM64=d147ca2e6aad8bc751b522ae91399e0e3867c42d17f892e23c8dd086ab6ccb0c13319d9b89c024b5a61ffb298e95bcfc82d9256074ddace882145c9d5a4be071
+# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
+ARG DOTNET_8_RUNTIME_VERSION=8.0.11
+ARG DOTNET_8_RUNTIME_SHA_AMD64=71ea528900c6fc7b54e951622296421d2a96191870c47e937117b84b28f91bf407d02046ddfecfe4ac37dc6182c65d1940927c33e45fa3d6f0179f81692490d6
+ARG DOTNET_8_RUNTIME_SHA_ARM64=f27d66dcdd249a6a2f87241b460238960240d163ffc081d8e7b42bd62702079f1a6784e3503dbd4ea8f9e816d82142fc829c759cbf9a1682b0340f0cebe16db5
+# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
+ARG ASPNET_8_RUNTIME_VERSION=8.0.11
+ARG ASPNET_8_RUNTIME_SHA_AMD64=e7acf9dc5cfa49aa7ec30dbb9586bc7beaac9e3116c75303b511770e3597b209739f28c754b2107c0255acac90187cd1000c1ee772463fc828934a4dda35f5c3
+ARG ASPNET_8_RUNTIME_SHA_ARM64=75b5888b7d65cf9e971925e48962c0822f630390a3f0f04ce1d84546990fed312e8ae8513c82caeada145c2ac8de2b229fd1dad2d2df36c8e9db0df9f65595ac
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -145,6 +158,54 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   else \
   curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_6_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_6_RUNTIME_VERSION}-linux-x64.tar.gz \
   && echo "${ASPNET_6_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
+  && rm aspnetcore.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install .NET 8 SDK
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/8.0/bookworm-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/8.0/bookworm-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_8_VERSION}/dotnet-sdk-${DOTNET_8_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_8_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_8_VERSION}/dotnet-sdk-${DOTNET_8_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_8_SHA_AMD64} dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install .NET 8 runtime (for LTS tools)
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/8.0/bookworm-slim/amd64/Dockerfile
+#        https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/8.0/bookworm-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_8_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_8_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${DOTNET_8_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_8_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_8_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${DOTNET_8_RUNTIME_SHA_AMD64}  dotnet.tar.gz" | sha512sum -c - ; \
+  fi \
+  && mkdir -p /usr/share/dotnet \
+  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
+  && rm dotnet.tar.gz \
+  # Trigger first run experience by running arbitrary cmd
+  && dotnet help
+
+# Install ASP.NET Core 8 runtime (for LTS tools)
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/8.0/bookworm-slim/amd64/Dockerfile
+#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/8.0/bookworm-slim/arm64v8/Dockerfile
+RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_8_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_8_RUNTIME_VERSION}-linux-arm64.tar.gz \
+  && echo "${ASPNET_8_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
+  else \
+  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_8_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_8_RUNTIME_VERSION}-linux-x64.tar.gz \
+  && echo "${ASPNET_8_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
   fi \
   && mkdir -p /usr/share/dotnet \
   && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
