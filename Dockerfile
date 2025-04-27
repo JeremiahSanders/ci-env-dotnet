@@ -14,7 +14,7 @@ ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:9.0.203
 # https://hub.docker.com/_/node/
 FROM ${DOTNET_SDK_IMAGE} AS build-environment
 
-ARG NODE_VERSION=20.18.1
+ARG NODE_VERSION=20.19.1
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
 ARG DOTNET_6_VERSION=6.0.428
