@@ -5,42 +5,32 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:9.0.306
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.100
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
+ARG DOTNET_9_VERSION=9.0.307
+# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
+ARG DOTNET_9_RUNTIME_VERSION=9.0.11
+# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
+ARG ASPNET_9_RUNTIME_VERSION=9.0.11
+
+# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
+ARG DOTNET_8_VERSION=8.0.416
+# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
+ARG DOTNET_8_RUNTIME_VERSION=8.0.22
+# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
+ARG ASPNET_8_RUNTIME_VERSION=8.0.22
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
 # https://hub.docker.com/_/microsoft-dotnet-runtime/
 # https://hub.docker.com/_/microsoft-dotnet-sdk/
 # https://hub.docker.com/_/node/
-FROM ${DOTNET_SDK_IMAGE} AS build-environment
+FROM ${DOTNET_SDK_IMAGE} AS base-ci-image
 
-ARG NODE_VERSION=20.19.5
-
-# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_6_VERSION=6.0.428
-ARG DOTNET_6_SHA_AMD64=04395f991ab50e4755ce1ae53e23592a7420b71b82160883bae3194dd1dfd5dcaed78743e4e0b4dd51ea43c49ec84b5643630707b3854f1471265dc98490d2f9
-ARG DOTNET_6_SHA_ARM64=cb8454865ecb99ce557bd0a5741d3dc84657a45ea00f9b2a0f0593e94e4e661e898a5690df90cf0175bf5982973c19985a168998aaa975b7ac7a3bef2ecd05d2
-# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_6_RUNTIME_VERSION=6.0.36
-ARG DOTNET_6_RUNTIME_SHA_AMD64=afb6018fcabec468ccd7ae2f1131d8c9de7f4de7645b8f0c223efbbdbfdc515fb0642a399ebfe372c02044416c4cae463c9c802cd156b9da4181efff0e33ee94
-ARG DOTNET_6_RUNTIME_SHA_ARM64=aa9a35f181204199ac6c44863c4773f8967b25adce218e23ce2822b40b26c38edc1e4e2ff323dabb81ae049bc187f14d209ef1365e68970fd6c32af21f0a1d44
-# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_6_RUNTIME_VERSION=6.0.36
-ARG ASPNET_6_RUNTIME_SHA_AMD64=0e3d1dcc715bffbcb8ab8cb4fd72accbeed79ac40b7fd517961797a168f4301505044d2c1494a49b0e68103940bd6c178c8ae7bacf75f4b40ce82cc85624f6bd
-ARG ASPNET_6_RUNTIME_SHA_ARM64=2a6a2dde7ba3aeee9145686ee32f1901a7aa6238ae8395ea3bad51770e227069272be83959b711d238210c377b66661e3cf039965f019b58cd44c08a982404a2
-
-# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_8_VERSION=8.0.415
-ARG DOTNET_8_SHA_AMD64=0fc0499a857f161f7c35775bb3f50ac6f0333f02f5df21d21147d538eb26a9a87282d4ba3707181c46f3c09d22cdc984e77820a5953a773525d6f7b332deb7f2
-ARG DOTNET_8_SHA_ARM64=c2efcccfd83690482d3314b23a9d9b53d41591795eb50e02857cb495dd1fde132f2c332dc243095463338d2dc6cd362cd7ea7ae3a9ce75b32ab54a517b91def8
-# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_8_RUNTIME_VERSION=8.0.21
-ARG DOTNET_8_RUNTIME_SHA_AMD64=b5771f98f89bcb70ba18df234dd82f006ee3b241fe4863485ea649d7c428d12f2e14de620a4ec09f56b9b98b5216c5b216a47f0b5cd9011a383993eef6979015
-ARG DOTNET_8_RUNTIME_SHA_ARM64=7eaeadbcca169b2fdd2ba078c242b775d17be887f0e058b936dd6f872c1b7ab3260a6852e398b84f4c9165d0f55bb0fcdebf8b3de26ff980ab7d3a43d320bd45
-# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_8_RUNTIME_VERSION=8.0.21
-ARG ASPNET_8_RUNTIME_SHA_AMD64=4aa9458d3de7b4ff960adcc4a655e4d7e4e6570e97791919113b8c9a55883964a60241daf3a70c60494cde1a61155d802339ec03b046466eac67298f0acc7289
-ARG ASPNET_8_RUNTIME_SHA_ARM64=db04b085c4ce1d732e55be57efe771b4be4c6bcf9b5359fbf88993b19026d77e7e108a41ab0c447da100306df8dfde90bc9c206cefb1856f7da6b618b6ceda32
+FROM base-ci-image AS ci-01-common-dependencies
 
 # Install:
 #   gnupg      - node.js installation dependency
@@ -56,6 +46,10 @@ RUN apt-get update && apt-get install \
   zip \
   -y \
   && rm -rf /var/lib/apt/lists/*
+
+FROM ci-01-common-dependencies AS ci-02-with-nodejs
+
+ARG NODE_VERSION=20.19.5
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
@@ -96,6 +90,8 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && node --version \
   && npm --version
 
+FROM ci-02-with-nodejs AS ci-03-with-aws-cli
+
 #   AWS CLI
 RUN mkdir "/aws-install" \
   && printf "\nDownloading AWS CLI...\n" \
@@ -107,12 +103,30 @@ RUN mkdir "/aws-install" \
   && printf "\n\nAWS CLI installed. Removing install directory...\n" \
   && rm -rf "/aws-install"
 
+FROM ci-03-with-aws-cli AS ci-04-with-docker-cli
+
 #   Docker CLI
 RUN apt-get update \
   && apt-get install \
   docker.io \
   -y \
   && rm -rf /var/lib/apt/lists/*
+
+FROM ci-04-with-docker-cli AS ci-05-with-dotnet-6
+
+# https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
+ARG DOTNET_6_VERSION=6.0.428
+ARG DOTNET_6_SHA_AMD64=04395f991ab50e4755ce1ae53e23592a7420b71b82160883bae3194dd1dfd5dcaed78743e4e0b4dd51ea43c49ec84b5643630707b3854f1471265dc98490d2f9
+ARG DOTNET_6_SHA_ARM64=cb8454865ecb99ce557bd0a5741d3dc84657a45ea00f9b2a0f0593e94e4e661e898a5690df90cf0175bf5982973c19985a168998aaa975b7ac7a3bef2ecd05d2
+# https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
+ARG DOTNET_6_RUNTIME_VERSION=6.0.36
+ARG DOTNET_6_RUNTIME_SHA_AMD64=afb6018fcabec468ccd7ae2f1131d8c9de7f4de7645b8f0c223efbbdbfdc515fb0642a399ebfe372c02044416c4cae463c9c802cd156b9da4181efff0e33ee94
+ARG DOTNET_6_RUNTIME_SHA_ARM64=aa9a35f181204199ac6c44863c4773f8967b25adce218e23ce2822b40b26c38edc1e4e2ff323dabb81ae049bc187f14d209ef1365e68970fd6c32af21f0a1d44
+# https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
+ARG ASPNET_6_RUNTIME_VERSION=6.0.36
+ARG ASPNET_6_RUNTIME_SHA_AMD64=0e3d1dcc715bffbcb8ab8cb4fd72accbeed79ac40b7fd517961797a168f4301505044d2c1494a49b0e68103940bd6c178c8ae7bacf75f4b40ce82cc85624f6bd
+ARG ASPNET_6_RUNTIME_SHA_ARM64=2a6a2dde7ba3aeee9145686ee32f1901a7aa6238ae8395ea3bad51770e227069272be83959b711d238210c377b66661e3cf039965f019b58cd44c08a982404a2
+
 
 # Install .NET 6 SDK
 #   See: https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/6.0/bullseye-slim/amd64/Dockerfile
@@ -162,77 +176,44 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
   # Trigger first run experience by running arbitrary cmd
   && dotnet help
 
-# Install .NET 8 SDK
-#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/8.0/bookworm-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/tree/main/src/sdk/8.0/bookworm-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_8_VERSION}/dotnet-sdk-${DOTNET_8_VERSION}-linux-arm64.tar.gz \
-  && echo "${DOTNET_8_SHA_ARM64} dotnet.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -SL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNET_8_VERSION}/dotnet-sdk-${DOTNET_8_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_8_SHA_AMD64} dotnet.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -oxzf dotnet.tar.gz -C /usr/share/dotnet ./packs ./sdk ./sdk-manifests ./templates ./LICENSE.txt ./ThirdPartyNotices.txt \
-  && rm dotnet.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
+# .NET 8
+FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_8_VERSION AS dotnet-sdk-8
+FROM mcr.microsoft.com/dotnet/aspnet:$ASPNET_8_RUNTIME_VERSION AS dotnet-aspnet-8
+FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_8_RUNTIME_VERSION AS dotnet-runtime-8
 
-# Install .NET 8 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/8.0/bookworm-slim/amd64/Dockerfile
-#        https://github.com/dotnet/dotnet-docker/tree/main/src/runtime/8.0/bookworm-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_8_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_8_RUNTIME_VERSION}-linux-arm64.tar.gz \
-  && echo "${DOTNET_8_RUNTIME_SHA_ARM64}  dotnet.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -fSL --output dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_8_RUNTIME_VERSION}/dotnet-runtime-${DOTNET_8_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${DOTNET_8_RUNTIME_SHA_AMD64}  dotnet.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf dotnet.tar.gz -C /usr/share/dotnet \
-  && rm dotnet.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
+FROM ci-05-with-dotnet-6 AS ci-06-with-dotnet-8
 
-# Install ASP.NET Core 8 runtime (for LTS tools)
-#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/8.0/bookworm-slim/amd64/Dockerfile
-#   See: https://github.com/dotnet/dotnet-docker/tree/main/src/aspnet/8.0/bookworm-slim/arm64v8/Dockerfile
-RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
-  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_8_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_8_RUNTIME_VERSION}-linux-arm64.tar.gz \
-  && echo "${ASPNET_8_RUNTIME_SHA_ARM64}  aspnetcore.tar.gz" | sha512sum -c - ; \
-  else \
-  curl -fSL --output aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNET_8_RUNTIME_VERSION}/aspnetcore-runtime-${ASPNET_8_RUNTIME_VERSION}-linux-x64.tar.gz \
-  && echo "${ASPNET_8_RUNTIME_SHA_AMD64}  aspnetcore.tar.gz" | sha512sum -c - ; \
-  fi \
-  && mkdir -p /usr/share/dotnet \
-  && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet \
-  && rm aspnetcore.tar.gz \
-  # Trigger first run experience by running arbitrary cmd
-  && dotnet help
+COPY --from=dotnet-sdk-8 /usr/share/dotnet /usr/share/dotnet
+COPY --from=dotnet-aspnet-8 /usr/share/dotnet /usr/share/dotnet
+COPY --from=dotnet-runtime-8 /usr/share/dotnet /usr/share/dotnet
+
+# .NET 9
+FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_9_VERSION AS dotnet-sdk-9
+FROM mcr.microsoft.com/dotnet/aspnet:$ASPNET_9_RUNTIME_VERSION AS dotnet-aspnet-9
+FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_9_RUNTIME_VERSION AS dotnet-runtime-9
+
+FROM ci-06-with-dotnet-8 AS ci-07-with-dotnet-9
+
+COPY --from=dotnet-sdk-9 /usr/share/dotnet /usr/share/dotnet
+COPY --from=dotnet-aspnet-9 /usr/share/dotnet /usr/share/dotnet
+COPY --from=dotnet-runtime-9 /usr/share/dotnet /usr/share/dotnet
+
+
+FROM ci-07-with-dotnet-9 AS ci-08-with-npm-global-packages
 
 # Add global NPM packages
 #   AWS CDK    - AWS infrastructure-as-code
 #   TypeScript - Language support
 RUN npm install -g aws-cdk typescript
 
-# Add dotnet tools global tools to path for tool installs
+FROM ci-08-with-npm-global-packages AS ci-09-with-dotnet-global-tools
+
+# Add dotnet tools global tools to path for global tool installs
 ENV PATH="${PATH}:/root/.dotnet/tools"
-#   cicee - to provide a continuous integration shell function library
-#     https://github.com/JeremiahSanders/cicee/blob/dev/docs/use/ci-library.md
-#   coverlet - to support code coverage analysis
-#     https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/GlobalTool.md
-#   fantomas - to support formatting and linting F#
-#     https://github.com/fsprojects/fantomas/blob/master/docs/Documentation.md#using-the-command-line-tool
-#   resharper command line tools - to provide .NET CI capabilities
-#     https://www.jetbrains.com/help/resharper/ReSharper_Command_Line_Tools.html
-RUN if [ "$(uname -m)" = "aarch64" ]; then \
-  echo "Skipping dotnet commands for ARM64 environment due to 'dotnet tool install --global' installation errors."; \
-  else \
-  dotnet tool install --global fantomas-tool && \
-  dotnet tool install --global coverlet.console && \
-  dotnet tool install --global JetBrains.ReSharper.GlobalTools && \
-  dotnet tool install --global cicee; \
-  fi
+
+# .NET global tools are not installed due to segmentation fault thrown in qemu when installing on non-native architecture.
+
+FROM ci-09-with-dotnet-global-tools AS final-ci-environment-image
 
 # Add the 'cicee' containerized CI mount directory (/code) to Git safe directories.
 #   This is required to allow Git commands to function in the containerized environment.

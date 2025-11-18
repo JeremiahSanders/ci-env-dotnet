@@ -1,3 +1,5 @@
+.idea/
+
 ci/env.local.sh
 
 build/
