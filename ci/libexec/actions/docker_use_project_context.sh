@@ -8,7 +8,11 @@ function docker_use_project_context() {
   local context_name="${PROJECT_NAME}"
 
   function _loadContext() {
-    docker buildx use "${context_name}" || docker buildx create --use --name "${context_name}"
+    docker buildx use "${context_name}" || docker buildx create \
+      --driver docker-container \
+      --name "${context_name}" \
+      --bootstrap \
+      --use
   }
 
   _loadContext &&

@@ -6,25 +6,28 @@
   "ciEnvironment": {
     "variables": [
       {
-        "name": "DOCKER_IMAGE_REPOSITORY",
         "description": "Docker image repository",
+        "name": "DOCKER_IMAGE_REPOSITORY",
         "required": true,
-        "secret": false,
-        "defaultValue": null
+        "secret": false
       },
       {
-        "name": "DOCKER_USERNAME",
         "description": "Docker username",
+        "name": "DOCKER_USERNAME",
         "required": true,
-        "secret": false,
-        "defaultValue": null
+        "secret": false
       },
       {
-        "name": "DOCKER_PASSWORD",
         "description": "Docker password or API token",
+        "name": "DOCKER_PASSWORD",
         "required": true,
-        "secret": true,
-        "defaultValue": null
+        "secret": true
+      },
+      {
+        "description": "A Boolean value indicating whether the Docker buildx context should be maintained between invocations.",
+        "name": "DOCKER_USE_PERSISTENT_BUILDX_CONTEXT",
+        "required": false,
+        "secret": false
       }
     ]
   }
