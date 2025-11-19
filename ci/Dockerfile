@@ -1,5 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS base-image
 
+FROM base-image AS with-dependencies
 # Install:
 #   Docker CLI, jq
 # Adding /code to safe directories addresses this error: fatal: unsafe repository ('/code' is owned by someone else)
@@ -13,14 +14,17 @@ RUN apt-get update \
   jq \
   software-properties-common \
   -y \
-  && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
   && add-apt-repository \
-  "deb [arch=amd64] https://download.docker.com/linux/debian \
+  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) \
   stable" \
   && apt-get update \
   && apt-get install \
   docker-ce-cli \
   -y \
-  && rm -rf /var/lib/apt/lists/* \
-  && git config --global --add safe.directory /code
+  && rm -rf /var/lib/apt/lists/*
+
+FROM with-dependencies AS final-ci-environment
+
+RUN git config --global --add safe.directory /code

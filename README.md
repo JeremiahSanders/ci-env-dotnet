@@ -6,17 +6,17 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 
 * .NET SDK
   * `Current` (`STS`) version and all [currently-supported][dotnet-support-policy] `LTS` versions.
-  * Currently: `9.0.306` (`STS`); `8.0.415` (`LTS`); `6.0.428` (`LTS`)
+  * Currently: `10.0.100` (`LTS`), `9.0.307` (`STS`); `8.0.416` (`LTS`)
 * node.js
   * Current `LTS` version.
-  * Currently: `20.19.5` (includes `npm` `10.8.2`)
+  * Currently: `24.11.1` (includes `npm` `11.6.2`)
 
 ## Included Shells
 
 * `bash` (Provided by base .NET image)
-  * GNU bash, version `5.2.15(1)-release` (as of 2024/11/20)
+  * GNU bash, version `5.2.21(1)-release` (as of 2025/11/16)
 * `pwsh` (Provided by base .NET image)
-  * PowerShell `7.5.0-preview.5` (as of 2024/11/20)
+  * PowerShell `7.6.0-preview.4` (as of 2025/11/16)
 * `sh` (Provided by base .NET image)
 
 ## Included Tools
@@ -27,18 +27,12 @@ Repository supporting `gnosian/ci-env-dotnet` [Docker repository][repository]. D
 | ----------------------------------------- | ----------- | ---------------------------------------------------------------------- |
 | [AWS CDK CLI][cdk]                        | `cdk`       | Enables creation and deployment of AWS infrastructure-as-code.         |
 | [AWS CLI][aws-cli]                        | `aws`       | Enables interaction with AWS infrastructure.                           |
-| [CICEE][cicee]                            | `cicee`     | Provides a continuous integration [shell function library][cicee-lib]. |
-| [Coverlet][coverlet]                      | `coverlet`  | Enables .NET test coverage analysis.                                   |
 | [Docker CLI][docker]                      | `docker`    | Enables Docker support.                                                |
-| [Fantomas][fantomas]                      | `fantomas`  | Enables F# linting and formatting.                                     |
 | [jq][]                                    | `jq`        | Enables parsing JSON.                                                  |
-| [ReSharper Global Tools][resharper-tools] | `jb`        | Enables C# linting and other continuous integration tasks.             |
 | [TypeScript][typescript]                  |             | Enables TypeScript language support in node.js.                        |
 | [zip][]                                   | `zip`       | Enables compressing build artifacts.                                   |
 
 > **Docker CLI Note**: `docker` CLI is provided by Debian's `docker.io` (not `docker-ce-cli`).
->
-> **ARM64 Note**: .NET global tools are **not** installed on ARM64 images, due to unresolved `dotnet tool install --global` errors. The following tools listed above are not available on ARM64: `cicee`, `coverlet`, `fantomas`, and `jb`. Projects using those tools in ARM64 environments must install them as .NET local tools, if possible.
 >
 > **Git Note**: This image includes `/code` in its global Git configuration `safe.directory`. (Required to enable [`cicee`][cicee] continuous integration scripts to generate prerelease versions for your code when using `cicee lib exec` within a `cicee exec` environment, which mounts your project code to `/code`.) This image _does not_ initialize the `/code` directory, so this should not be a security concern. However, if you wish to _disable_ this Git safe directory registration when building an image based upon this image, add a `RUN` layer to your `Dockerfile` which [sets the `safe.directory` as shown in Git documentation][git-safe-directory].
 

@@ -13,13 +13,15 @@ function docker_publish_xarch_image() {
           --tag "${DOCKER_IMAGE}" \
           --tag "${DOCKER_IMAGE_REPOSITORY}:latest" \
           --platform linux/amd64,linux/arm64 \
-          --push .
+          --push \
+          .
       else
         docker buildx build \
           --file "${PROJECT_ROOT}/Dockerfile" \
           --tag "${DOCKER_IMAGE}" \
           --platform linux/amd64,linux/arm64 \
-          --push .
+          --push \
+          .
       fi
     }
     printf "Preparing to push %s.\n\n" "${DOCKER_IMAGE}" &&
