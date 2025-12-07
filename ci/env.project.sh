@@ -12,4 +12,7 @@ printf "\nInitializing project CI environment.\n"
 
 export DOCKER_IMAGE_REPOSITORY="gnosian/ci-env-dotnet"
 
+export PROJECT_VERSION_MAJOR="$(semver_extract ${PROJECT_VERSION} major)"
+export PROJECT_VERSION_MINOR="$(semver_extract ${PROJECT_VERSION} minor)"
+
 printf "\nProject CI environment initialized.\n"
