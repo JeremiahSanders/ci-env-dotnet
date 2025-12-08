@@ -10,7 +10,7 @@ ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_9_VERSION=9.0.307
+ARG DOTNET_9_VERSION=9.0.308
 # https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
 ARG DOTNET_9_RUNTIME_VERSION=9.0.11
 # https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
