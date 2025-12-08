@@ -12,6 +12,8 @@ function docker_publish_xarch_image() {
           --file "${PROJECT_ROOT}/Dockerfile" \
           --tag "${DOCKER_IMAGE}" \
           --tag "${DOCKER_IMAGE_REPOSITORY}:latest" \
+          --tag "${DOCKER_IMAGE_REPOSITORY}:${PROJECT_VERSION_MAJOR}" \
+          --tag "${DOCKER_IMAGE_REPOSITORY}:${PROJECT_VERSION_MINOR}" \
           --platform linux/amd64,linux/arm64 \
           --push \
           .

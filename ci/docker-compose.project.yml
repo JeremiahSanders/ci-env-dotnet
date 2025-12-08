@@ -15,5 +15,7 @@ services:
       DOCKER_IMAGE_REPOSITORY:
       DOCKER_PASSWORD:
       DOCKER_USERNAME:
+      PROJECT_VERSION_MAJOR:
+      PROJECT_VERSION_MINOR:
     # NOTE: Root user specified below helps address permissions errors when using the default CICEE Dockerfile.
     user: root
