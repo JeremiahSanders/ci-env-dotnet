@@ -5,23 +5,23 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.101
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.103
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_9_VERSION=9.0.308
+ARG DOTNET_9_VERSION=9.0.311
 # https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_9_RUNTIME_VERSION=9.0.11
+ARG DOTNET_9_RUNTIME_VERSION=9.0.13
 # https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_9_RUNTIME_VERSION=9.0.11
+ARG ASPNET_9_RUNTIME_VERSION=9.0.13
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_8_VERSION=8.0.416
+ARG DOTNET_8_VERSION=8.0.418
 # https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_8_RUNTIME_VERSION=8.0.22
+ARG DOTNET_8_RUNTIME_VERSION=8.0.24
 # https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_8_RUNTIME_VERSION=8.0.22
+ARG ASPNET_8_RUNTIME_VERSION=8.0.24
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
@@ -139,21 +139,25 @@ COPY --from=dotnet-sdk-9 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnet-aspnet-9 /usr/share/dotnet /usr/share/dotnet
 COPY --from=dotnet-runtime-9 /usr/share/dotnet /usr/share/dotnet
 
-FROM ci-06-with-dotnet-9 AS ci-07-with-npm-global-packages
+FROM ci-06-with-dotnet-9 AS ci-07-readd-base-image-dotnet
+
+COPY --from=base-ci-image /usr/share/dotnet /usr/share/dotnet
+
+FROM ci-07-readd-base-image-dotnet AS ci-08-with-npm-global-packages
 
 # Add global NPM packages
 #   AWS CDK    - AWS infrastructure-as-code
 #   TypeScript - Language support
 RUN npm install -g aws-cdk typescript
 
-FROM ci-07-with-npm-global-packages AS ci-08-with-dotnet-global-tools
+FROM ci-08-with-npm-global-packages AS ci-09-with-dotnet-global-tools
 
 # Add dotnet tools global tools to path for global tool installs
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
 # .NET global tools are not installed due to segmentation fault thrown in qemu when installing on non-native architecture.
 
-FROM ci-08-with-dotnet-global-tools AS final-ci-environment-image
+FROM ci-09-with-dotnet-global-tools AS final-ci-environment-image
 
 # Add the 'cicee' containerized CI mount directory (/code) to Git safe directories.
 #   This is required to allow Git commands to function in the containerized environment.
