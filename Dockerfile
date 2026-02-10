@@ -5,6 +5,9 @@
 #      .NET Core (all currently-supported .NET Core 'LTS' support level SDKs)
 #      node.js (current LTS support level release).
 ####
+
+# .NET 10 SDK image is based on Ubuntu Noble. Source: SDK Docker tag target image is also tagged with `-noble` tags.
+#  Ubuntu Noble is a derivative of Debian Trixie. Source: https://askubuntu.com/a/445496
 ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.103
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -49,11 +52,11 @@ RUN apt-get update && apt-get install \
 
 FROM ci-01-common-dependencies AS ci-02-with-nodejs
 
-ARG NODE_VERSION=24.11.1
+ARG NODE_VERSION=24.13.0
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
-#     See: https://github.com/nodejs/docker-node/blob/a364e16a23fb97ea9768e5adbae36f1de63f44e9/24/bookworm/Dockerfile
+#     See: https://github.com/nodejs/docker-node/blob/8e749999655b126bb02f97f7087a2e43072bed82/24/trixie/Dockerfile
 RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
   && case "${dpkgArch##*-}" in \
     amd64) ARCH='x64';; \

@@ -17,6 +17,10 @@ declare REPO_NAME="${DOCKER_IMAGE_REPOSITORY:-gnosian/ci-env-dotnet}"
 declare BUILD_DATE_TIME="$(TZ="utc" date "+%Y%m%d-%H%M%S")"
 declare TAG_NAME="${REPO_NAME}:interactive-${BUILD_DATE_TIME}"
 docker build --pull --rm -f "Dockerfile" -t "${TAG_NAME}" "${PROJECT_ROOT}" &&
+  printf "\n.Image: bash --version\n\n" &&
+  docker run --rm "${TAG_NAME}" "bash" "--version" &&
+  printf "\n.Image: pwsh --version\n\n" &&
+  docker run --rm "${TAG_NAME}" "pwsh" "--version" &&
   printf "\n.NET: dotnet --info\n\n" &&
   docker run --rm "${TAG_NAME}" "dotnet" "--info" &&
   printf "\n\n.NET: dotnet tool list --global\n\n" &&
