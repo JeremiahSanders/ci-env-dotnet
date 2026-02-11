@@ -3,6 +3,7 @@
 declare SCRIPT_LOCATION="$(dirname "${BASH_SOURCE[0]}")"
 PROJECT_ROOT="${PROJECT_ROOT:-$(cd "${SCRIPT_LOCATION}" && cd .. && pwd)}"
 
+export PROJECT_VERSION="$(dotnet cicee meta version)"
 source "${PROJECT_ROOT}/ci/env.project.sh"
 
 if [[ -f "${PROJECT_ROOT}/ci/env.local.sh" ]]; then
