@@ -10,6 +10,8 @@ function docker_use_project_context() {
   function _loadContext() {
     docker buildx use "${context_name}" || docker buildx create \
       --driver docker-container \
+      --driver-opt image=moby/buildkit:latest \
+      --driver-opt network=host \
       --name "${context_name}" \
       --bootstrap \
       --use

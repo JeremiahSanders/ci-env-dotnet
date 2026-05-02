@@ -10,6 +10,7 @@ function docker_publish_xarch_image() {
       if [[ "${RELEASE_ENVIRONMENT:-false}" = true ]]; then
         docker buildx build \
           --file "${PROJECT_ROOT}/Dockerfile" \
+          --network=host \
           --tag "${DOCKER_IMAGE}" \
           --tag "${DOCKER_IMAGE_REPOSITORY}:latest" \
           --tag "${DOCKER_IMAGE_REPOSITORY}:${PROJECT_VERSION_MAJOR}" \
@@ -20,6 +21,7 @@ function docker_publish_xarch_image() {
       else
         docker buildx build \
           --file "${PROJECT_ROOT}/Dockerfile" \
+          --network=host \
           --tag "${DOCKER_IMAGE}" \
           --platform linux/amd64,linux/arm64 \
           --push \
