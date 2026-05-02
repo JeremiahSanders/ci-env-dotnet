@@ -28,6 +28,18 @@
         "name": "DOCKER_USE_PERSISTENT_BUILDX_CONTEXT",
         "required": false,
         "secret": false
+      },
+      {
+        "description": "The project's major SemVer version.",
+        "name": "PROJECT_VERSION_MAJOR",
+        "required": false,
+        "secret": false
+      },
+      {
+        "description": "The project's minor SemVer version.",
+        "name": "PROJECT_VERSION_MINOR",
+        "required": false,
+        "secret": false
       }
     ]
   }
