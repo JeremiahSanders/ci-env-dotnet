@@ -8,6 +8,7 @@ function docker_build_xarch_image() {
   function _build() {
     docker buildx build \
         --file "${PROJECT_ROOT}/Dockerfile" \
+        --network=host \
         --tag "${DOCKER_IMAGE}" \
         --platform linux/amd64,linux/arm64 \
         . &&

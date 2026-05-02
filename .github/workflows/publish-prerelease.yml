@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout latest commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Execute compose script - Create a dry run composition to validate without publishing
         run: ci/bin/compose.sh
         env:

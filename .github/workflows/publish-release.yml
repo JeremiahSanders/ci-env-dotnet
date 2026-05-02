@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout latest commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Execute publish script - Publish project artifacts
         run: ci/bin/publish.sh
         env:
