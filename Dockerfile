@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install \
 
 FROM ci-01-common-dependencies AS ci-02-with-nodejs
 
-ARG NODE_VERSION=24.19.0
+ARG NODE_VERSION=24.21.0
 
 #   node.js
 ENV NODE_VERSION=${NODE_VERSION}
