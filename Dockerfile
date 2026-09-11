@@ -8,23 +8,23 @@
 
 # .NET 10 SDK image is based on Ubuntu Noble. Source: SDK Docker tag target image is also tagged with `-noble` tags.
 #  Ubuntu Noble is a derivative of Debian Trixie. Source: https://askubuntu.com/a/445496
-ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.400
+ARG DOTNET_SDK_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0.401
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_9_VERSION=9.0.317
+ARG DOTNET_9_VERSION=9.0.318
 # https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_9_RUNTIME_VERSION=9.0.19
+ARG DOTNET_9_RUNTIME_VERSION=9.0.20
 # https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_9_RUNTIME_VERSION=9.0.19
+ARG ASPNET_9_RUNTIME_VERSION=9.0.20
 
 # https://github.com/dotnet/dotnet-docker/blob/main/README.sdk.md#full-tag-listing
-ARG DOTNET_8_VERSION=8.0.424
+ARG DOTNET_8_VERSION=8.0.425
 # https://github.com/dotnet/dotnet-docker/blob/main/README.runtime.md#full-tag-listing
-ARG DOTNET_8_RUNTIME_VERSION=8.0.30
+ARG DOTNET_8_RUNTIME_VERSION=8.0.31
 # https://github.com/dotnet/dotnet-docker/blob/main/README.aspnet.md#full-tag-listing
-ARG ASPNET_8_RUNTIME_VERSION=8.0.30
+ARG ASPNET_8_RUNTIME_VERSION=8.0.31
 
 # https://hub.docker.com/_/microsoft-dotnet
 # https://hub.docker.com/_/microsoft-dotnet-aspnet/
